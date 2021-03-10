@@ -15,9 +15,6 @@ public abstract class AbstractEntity<ID> {
     @Column(name = "modified_date")
     private LocalDateTime modifiedDate;
 
-    @Column(name = "is_deleted")
-    private Boolean isDeleted = false;
-
     public abstract ID getId();
 
     public abstract void setId(ID id);
@@ -36,14 +33,6 @@ public abstract class AbstractEntity<ID> {
 
     public void setModifiedDate(LocalDateTime modifedDate) {
         this.modifiedDate = modifedDate;
-    }
-
-    public Boolean getDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
     }
 
     @PrePersist

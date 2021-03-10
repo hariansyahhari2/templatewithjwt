@@ -4,7 +4,7 @@ import com.hariansyah.templatewithjwt.enums.IdentityCategoryEnum;
 
 public class UserDetailsResponse {
 
-    private Integer id;
+    private String id;
 
     private IdentityCategoryEnum identityCategory;
 
@@ -16,11 +16,11 @@ public class UserDetailsResponse {
 
     private String address;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
