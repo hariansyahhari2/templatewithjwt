@@ -12,6 +12,8 @@ public class UserResponse {
 
     private RoleEnum role;
 
+    private UserDetailsResponse userDetails;
+
     public Integer getId() {
         return id;
     }
@@ -42,5 +44,13 @@ public class UserResponse {
 
     public void setRole(RoleEnum role) {
         this.role = role;
+    }
+
+    public UserDetailsResponse getUserDetails() {
+        return userDetails;
+    }
+
+    public void setUserDetails(UserDetailsResponse userDetails) {
+        this.userDetails = userDetails;
     }
 }

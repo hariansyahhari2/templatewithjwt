@@ -30,10 +30,6 @@ public class UserDetails extends AbstractEntity<String> {
     @Column(name = "address")
     private String address;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @Override
     public String getId() {
         return id;
@@ -82,13 +78,5 @@ public class UserDetails extends AbstractEntity<String> {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

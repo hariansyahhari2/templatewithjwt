@@ -22,8 +22,7 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.security.NoSuchAlgorithmException;
 
-import static com.hariansyah.templatewithjwt.enums.RoleEnum.ADMIN;
-import static com.hariansyah.templatewithjwt.enums.RoleEnum.CUSTOMER;
+import static com.hariansyah.templatewithjwt.enums.RoleEnum.*;
 
 
 @RequestMapping("/user")
@@ -46,27 +45,29 @@ public class UserController {
     public ResponseMessage<UserDetailsResponse> addWithUser(
             @RequestBody @Valid UserWithUserDetailsRequest model
     ) {
-        UserDetails entity = modelMapper.map(model, UserDetails.class);
-
         if (repository.existsByUsername(model.getUser().getUsername())) {
             throw new ValidationException("Username already existed");
         }
 
-        User account = entity.getUser();
+        UserDetails userDetails = modelMapper.map(model.getUserDetails(), UserDetails.class);
+        userDetails = service.save(userDetails);
+
+        User user = new User();
+        user.setUsername(model.getUser().getUsername());
+        user.setUserDetails(userDetails);
+        user.setEmail(model.getUser().getEmail());
         String hashPassword = new BCryptPasswordEncoder().encode(model.getUser().getPassword());
-        account.setPassword(hashPassword);
-        account.setRole(CUSTOMER);
+        user.setPassword(hashPassword);
+        user.setRole(CUSTOMER);
 
-        repository.save(account);
-        entity.setUser(account);
-        entity = service.save(entity);
+        repository.save(user);
 
-        UserDetailsResponse data = modelMapper.map(entity, UserDetailsResponse.class);
+        UserDetailsResponse data = modelMapper.map(userDetails, UserDetailsResponse.class);
         return ResponseMessage.success(data);
     }
 
     @GetMapping("/{username}/make-customer")
-    public ResponseMessage<UserResponse> makeGuest(
+    public ResponseMessage<UserResponse> makeCustomer(
             @PathVariable String username,
             HttpServletRequest request
     ) {
@@ -81,6 +82,30 @@ public class UserController {
                 throw new InvalidPermissionsException();
 
             account.setRole(CUSTOMER);
+            repository.save(account);
+
+            UserResponse data = modelMapper.map(account, UserResponse.class);
+            return ResponseMessage.success(data);
+        }
+        throw new InvalidPermissionsException();
+    }
+
+    @GetMapping("/{username}/make-courier")
+    public ResponseMessage<UserResponse> makeCourier(
+            @PathVariable String username,
+            HttpServletRequest request
+    ) {
+        String token = request.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            User account = repository.findByUsername(username);
+            token = token.substring(7);
+            String loggedInUsername = jwtTokenUtil.getUsernameFromToken(token);
+            User loggedInUser = repository.findByUsername(loggedInUsername);
+
+            if (loggedInUser.getUsername().equals(account.getUsername()) || loggedInUser.getRole().equals(CUSTOMER) || loggedInUser.getRole().equals(COURIER))
+                throw new InvalidPermissionsException();
+
+            account.setRole(COURIER);
             repository.save(account);
 
             UserResponse data = modelMapper.map(account, UserResponse.class);

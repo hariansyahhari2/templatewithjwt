@@ -16,8 +16,6 @@ public class UserDetailsResponse {
 
     private String address;
 
-    private UserResponse user;
-
     public Integer getId() {
         return id;
     }
@@ -64,13 +62,5 @@ public class UserDetailsResponse {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public UserResponse getUser() {
-        return user;
-    }
-
-    public void setUser(UserResponse user) {
-        this.user = user;
     }
 }

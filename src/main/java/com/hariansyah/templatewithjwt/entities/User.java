@@ -28,6 +28,10 @@ public class User extends AbstractEntity<String> {
     @Column
     private RoleEnum role;
 
+    @OneToOne
+    @JoinColumn(name = "user_details_id")
+    private UserDetails userDetails;
+
     @Override
     public String getId() {
         return id;
@@ -68,5 +72,13 @@ public class User extends AbstractEntity<String> {
 
     public void setRole(RoleEnum role) {
         this.role = role;
+    }
+
+    public UserDetails getUserDetails() {
+        return userDetails;
+    }
+
+    public void setUserDetails(UserDetails userDetails) {
+        this.userDetails = userDetails;
     }
 }

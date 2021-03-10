@@ -42,35 +42,12 @@ public class UserDetailsController {
             token = token.substring(7);
             String username = jwtTokenUtil.getUsernameFromToken(token);
             User account = accountRepository.findByUsername(username);
-            UserDetails entity = service.findById(id);
-            if(entity != null) {
-                if (entity.getUser().getId().equals(account.getId())) {
-                    UserDetailsResponse data = modelMapper.map(entity, UserDetailsResponse.class);
-                    return ResponseMessage.success(data);
-                }
+
+            UserDetailsResponse data = modelMapper.map(account.getUserDetails(), UserDetailsResponse.class);
+
+            if (account.getUserDetails().getId().equals(id)) {
+                return ResponseMessage.success(data);
             }
-        }
-        throw new InvalidPermissionsException();
-    }
-
-    @PostMapping("/add")
-    public ResponseMessage<UserDetailsResponse> add(
-            @RequestBody @Valid UserDetailsRequest model,
-            HttpServletRequest request
-    ) {
-        String token = request.getHeader("Authorization");
-        if (token != null && token.startsWith("Bearer ")) {
-            token = token.substring(7);
-            String username = jwtTokenUtil.getUsernameFromToken(token);
-            User account = accountRepository.findByUsername(username);
-
-            UserDetails entity = modelMapper.map(model, UserDetails.class);
-            entity.setUser(account);
-            entity.setDeleted(false);
-            entity = service.save(entity);
-
-            UserDetailsResponse data = modelMapper.map(entity, UserDetailsResponse.class);
-            return ResponseMessage.success(data);
         }
         throw new InvalidPermissionsException();
     }
@@ -88,7 +65,8 @@ public class UserDetailsController {
             token = token.substring(7);
             String username = jwtTokenUtil.getUsernameFromToken(token);
             User account = accountRepository.findByUsername(username);
-            if (entity.getUser().getId().equals(account.getId())) {
+
+            if (entity.getId().equals(account.getUserDetails().getId())) {
                 modelMapper.map(model, entity);
                 entity = service.save(entity);
 
